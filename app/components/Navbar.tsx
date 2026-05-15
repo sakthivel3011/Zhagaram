@@ -34,11 +34,13 @@ export default function Navbar() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-white/20 bg-black">
-      <div className="container mx-auto px-6 md:px-12 lg:px-24 h-[88px] flex items-center justify-between">
+      <div className="w-full px-4 sm:px-6 md:px-12 lg:px-24 h-16 sm:h-20 md:h-[88px] flex items-center justify-between">
         <Link href="/" className="block text-white hover:text-gray-300 transition-colors">
-          <div className="flex items-center gap-3">
-            <Image src={logoIcon} alt="Zhagaram Logo" width={60} height={60} className="object-contain" />
-            <span className="font-[family-name:var(--font-michroma)] text-2xl font-bold tracking-wider uppercase">Zhagaram</span>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="relative w-8 h-8 sm:w-10 sm:h-10 md:w-[60px] md:h-[60px]">
+              <Image src={logoIcon} alt="Zhagaram Logo" fill className="object-contain" />
+            </div>
+            <span className="font-[family-name:var(--font-michroma)] text-base sm:text-lg md:text-2xl font-bold tracking-wider uppercase">Zhagaram</span>
           </div>
         </Link>
 

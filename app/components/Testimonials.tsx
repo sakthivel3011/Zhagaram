@@ -35,7 +35,7 @@ export default function Testimonials() {
               key={i}
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
+              viewport={{ once: true, amount: 0.1 }}
               transition={{ duration: 0.8, ease: "easeOut", delay: i * 0.2 }}
               className="testimonial-card border border-white/10 p-8 flex flex-col justify-between hover:border-brand-orange/50 transition-colors duration-500"
             >

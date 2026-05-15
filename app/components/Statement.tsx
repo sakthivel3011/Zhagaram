@@ -27,7 +27,7 @@ export default function Statement() {
           <motion.h2
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
+            viewport={{ once: true, amount: 0.1 }}
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
             className="statement-text font-[family-name:var(--font-great-vibes)] text-3xl md:text-5xl lg:text-[56px] font-light leading-[1.2]"
           >

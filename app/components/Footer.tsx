@@ -1,8 +1,21 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import logoIcon from "@/app/logo/icon.png";
 
 export default function Footer() {
+  const handleScrollTo = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    e.preventDefault();
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+      window.history.pushState(null, "", `#${id}`);
+    } else {
+      window.location.href = `/#${id}`;
+    }
+  };
+
   return (
     <footer className="bg-black pt-32 pb-12 relative border-t border-brand-orange/30 overflow-hidden">
       {/* Top Frame Line */}
@@ -32,11 +45,9 @@ export default function Footer() {
             <div className="lg:col-span-3 text-center md:text-left">
               <h4 className="text-brand-orange uppercase text-xs font-light tracking-widest mb-8">Services</h4>
               <ul className="flex flex-col items-center md:items-start gap-6 text-white uppercase text-sm font-medium tracking-wider">
-                <li><Link href="/" className="text-link hover:text-white transition-colors"><span className="text-link_span">College Culturals</span></Link></li>
-                <li><Link href="/" className="text-link hover:text-white transition-colors"><span className="text-link_span">Corporate Events</span></Link></li>
-                <li><Link href="/" className="text-link hover:text-white transition-colors"><span className="text-link_span">Concerts &amp; Festivals</span></Link></li>
-                <li><Link href="/" className="text-link hover:text-white transition-colors"><span className="text-link_span">Concert Management</span></Link></li>
-   
+                <li><Link href="#statement" onClick={(e) => handleScrollTo(e, "statement")} className="text-link hover:text-white transition-colors"><span className="text-link_span">College Culturals</span></Link></li>
+                <li><Link href="#statement" onClick={(e) => handleScrollTo(e, "statement")} className="text-link hover:text-white transition-colors"><span className="text-link_span">Corporate Events</span></Link></li>
+                <li><Link href="#statement" onClick={(e) => handleScrollTo(e, "statement")} className="text-link hover:text-white transition-colors"><span className="text-link_span">Concerts &amp; Festivals</span></Link></li>
               </ul>
             </div>
 
@@ -44,9 +55,9 @@ export default function Footer() {
             <div className="lg:col-span-3 text-center md:text-left">
               <h4 className="text-brand-orange uppercase text-xs font-light tracking-widest mb-8">Company</h4>
               <ul className="flex flex-col items-center md:items-start gap-6 text-white uppercase text-sm font-medium tracking-wider">
-                <li><Link href="/" className="text-link hover:text-white transition-colors"><span className="text-link_span">About Us</span></Link></li>
-                <li><Link href="/" className="text-link hover:text-white transition-colors"><span className="text-link_span">Contact</span></Link></li>
-                <li><Link href="/" className="text-link hover:text-white transition-colors"><span className="text-link_span">Testimonials</span></Link></li>
+                <li><Link href="/about" className="text-link hover:text-white transition-colors"><span className="text-link_span">About Us</span></Link></li>
+                <li><Link href="/contact" className="text-link hover:text-white transition-colors"><span className="text-link_span">Contact</span></Link></li>
+                <li><Link href="#testimonials" onClick={(e) => handleScrollTo(e, "testimonials")} className="text-link hover:text-white transition-colors"><span className="text-link_span">Testimonials</span></Link></li>
               </ul>
             </div>
             {/* Contact Us */}

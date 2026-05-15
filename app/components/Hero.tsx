@@ -5,9 +5,19 @@ import { motion } from "framer-motion";
 import logoIcon from "@/app/logo/icon.png";
 
 export default function Hero() {
+  const handleScrollTo = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    e.preventDefault();
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+      window.history.pushState(null, "", `#${id}`);
+    } else {
+      window.location.href = `/#${id}`;
+    }
+  };
 
   return (
-    <section className="relative h-screen w-full flex items-center pt-20">
+    <section className="relative min-h-screen lg:h-screen w-full flex items-center pt-20 pb-12 lg:pb-0">
       <div className="absolute inset-0 z-0">
         <video
           autoPlay
@@ -21,13 +31,13 @@ export default function Hero() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black" />
       </div>
 
-      <div className="w-full px-6 md:px-12 lg:px-24 relative z-10 flex flex-col lg:flex-row justify-between items-center gap-12">
+      <div className="w-full px-6 md:px-12 lg:px-24 relative z-10 flex flex-col lg:flex-row justify-between items-center gap-6 lg:gap-12">
         <div className="max-w-[900px]">
           <motion.h1
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
-            className="hero-text font-[family-name:var(--font-oxanium)] text-6xl md:text-8xl lg:text-[110px] leading-[0.95] tracking-tight mb-8"
+            className="hero-text font-[family-name:var(--font-oxanium)] text-5xl sm:text-6xl md:text-8xl lg:text-[110px] leading-[0.95] tracking-tight mb-8"
           >
             <span className="text-white">PREMIUM</span><br />
             <span className="text-brand-orange">EVENT<br />PLANNERS.</span>
@@ -44,14 +54,14 @@ export default function Hero() {
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: "easeOut", delay: 0.9 }}
-            className="hero-text flex flex-col sm:flex-row gap-4"
+            className="hero-text flex flex-col items-center sm:flex-row gap-4"
           >
-            <a href="" className="button-custom group px-8 py-4 font-[family-name:var(--font-oxanium)] font-medium tracking-wider text-sm text-center text-black">
-              <div className="button_background bg-brand-orange group-hover:bg-orange-600 transition-colors"></div>
+            <a href="#" onClick={(e) => handleScrollTo(e, "statement")} className="button-custom group px-8 py-4 font-[family-name:var(--font-oxanium)] font-medium tracking-wider text-sm text-center text-black transition-all active:scale-95">
+              <div className="button_background bg-brand-orange group-hover:bg-orange-600 group-active:bg-orange-700 transition-colors"></div>
               <span className="button_text"><span className="button_span">EXPLORE EVENTS</span></span>
             </a>
-            <a href="" className="button-custom group px-8 py-4 font-[family-name:var(--font-oxanium)] font-medium tracking-wider text-sm text-center text-brand-orange border border-white/10 transition-colors hover:border-brand-orange/50">
-              <div className="button_background bg-transparent group-hover:bg-white/5 transition-colors"></div>
+            <a href="/contact" className="button-custom group px-8 py-4 font-[family-name:var(--font-oxanium)] font-medium tracking-wider text-sm text-center text-brand-orange border border-white/10 transition-all hover:border-brand-orange/50 active:scale-95">
+              <div className="button_background bg-transparent group-hover:bg-white/5 group-active:bg-white/10 transition-colors"></div>
               <span className="button_text"><span className="button_span">BOOK YOUR EVENT</span></span>
             </a>
           </motion.div>
@@ -61,17 +71,17 @@ export default function Hero() {
         <div className="flex justify-center w-full lg:w-auto flex-shrink-0 lg:-translate-x-16">
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ 
-              opacity: 1, 
+            animate={{
+              opacity: 1,
               scale: 1,
               y: [0, -15, 0],
             }}
-            transition={{ 
+            transition={{
               opacity: { duration: 1 },
               scale: { duration: 1 },
               y: { duration: 4, repeat: Infinity, ease: "easeInOut" }
             }}
-            className="w-[200px] h-[200px] md:w-[400px] md:h-[400px] lg:w-[500px] lg:h-[500px]"
+            className="w-[150px] h-[150px] sm:w-[200px] sm:h-[200px] md:w-[400px] md:h-[400px] lg:w-[500px] lg:h-[500px]"
           >
             <Image src={logoIcon} alt="Zhagaram Logo" width={500} height={500} className="object-contain" quality={100} priority />
           </motion.div>

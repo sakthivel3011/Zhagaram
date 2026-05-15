@@ -39,7 +39,7 @@ export default function AboutPage() {
         
         {/* Hero Section */}
         <section className="relative w-full h-[75vh] min-h-[600px] flex items-center overflow-hidden">
-          <div className="container mx-auto px-6 md:px-12 lg:px-24 flex justify-between relative z-10 w-full h-full items-center">
+          <div className="w-full px-4 sm:px-6 md:px-12 lg:px-24 flex justify-between relative z-10 h-full items-center">
             
             {/* Left Content */}
             <motion.div
@@ -49,7 +49,7 @@ export default function AboutPage() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, ease: "easeOut" }}
             >
-              <h1 className="font-outfit text-[60px] md:text-[75px] lg:text-[88px] font-light tracking-tight mb-6 leading-[1.05]">
+              <h1 className="font-outfit text-4xl sm:text-5xl md:text-[75px] lg:text-[88px] font-light tracking-tight mb-6 leading-[1.05]">
                 Crafting Extraordinary <br/>
                 <span className="text-brand-orange font-[family-name:var(--font-oxanium)]">Celebrations</span>
               </h1>

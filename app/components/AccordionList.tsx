@@ -49,7 +49,7 @@ export default function AccordionList() {
             className="border-b border-black/10 overflow-hidden"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
+            viewport={{ once: true, amount: 0.1 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
           >
             <button
