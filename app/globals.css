@@ -1,0 +1,147 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+
+  html {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  ::selection {
+    background-color: #FF4522;
+    color: #000000;
+  }
+  
+  html::-webkit-scrollbar {
+    display: none;
+  }
+
+  body {
+    color: rgb(var(--foreground-rgb));
+    background: rgb(var(--background-start-rgb));
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  body::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Lenis scroll styles */
+html.lenis, html.lenis body {
+  height: auto;
+  width: 100vw;
+  overflow-x: hidden;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* Custom Text Link Hover Animation */
+.text-link {
+  text-decoration: none;
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+}
+
+.text-link::before {
+  content: "";
+  position: absolute;
+  bottom: 0rem;
+  left: 0;
+  width: 100%;
+  height: 0.0625rem;
+  background-color: currentColor;
+  transition: transform 0.6s cubic-bezier(0.625, 0.05, 0, 1);
+  transform-origin: right;
+  transform: scaleX(0) rotate(0.001deg);
+}
+
+.text-link_span {
+  display: inline-block;
+  transition: transform 0.525s cubic-bezier(0.625, 0.05, 0, 1);
+  --text-duplicate-distance: 1.5em;
+  text-shadow: 0px var(--text-duplicate-distance) currentColor;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .text-link:hover .text-link_span {
+    transform: translate(0px, calc(-1 * var(--text-duplicate-distance)));
+  }
+  .text-link:hover::before {
+    transform-origin: left;
+    transform: scaleX(1) rotate(0.001deg);
+  }
+}
+
+/* Custom Button Hover Animation */
+.button-custom {
+  position: relative;
+  display: inline-flex;
+  overflow: hidden;
+  align-items: center;
+  justify-content: center;
+}
+
+.button_background {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  transform: scale(1);
+  transition: background 0.6s, border 0.6s, transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.button-custom:hover .button_background {
+  transform: scale(0.95);
+}
+
+.button_text {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.button_span {
+  display: inline-block;
+  transition: transform 0.525s cubic-bezier(0.625, 0.05, 0, 1);
+  --text-duplicate-distance: 1.5em;
+  text-shadow: 0px var(--text-duplicate-distance) currentColor;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .button-custom:hover .button_span {
+    transform: translate(0px, calc(-1 * var(--text-duplicate-distance)));
+  }
+}
+
