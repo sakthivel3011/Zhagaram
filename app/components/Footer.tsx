@@ -2,9 +2,21 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useState, useRef } from "react";
 import logoIcon from "@/app/logo/icon.png";
 
+// ─── Newsletter Apps Script URL ─────────────────────────────
+const NEWSLETTER_URL = "https://script.google.com/macros/s/AKfycbzwRDFMpAtc1qvMM12NlkBWML2-R3ONuKlXLEDMZe_3oDfngIpU1NQMz_L2fx5U__ql/exec";
+// ────────────────────────────────────────────────────────────
+
+type NLStatus = "idle" | "loading" | "success" | "error";
+
 export default function Footer() {
+  const [nlEmail, setNlEmail]   = useState("");
+  const [nlStatus, setNlStatus] = useState<NLStatus>("idle");
+  const [nlMsg, setNlMsg]       = useState("");
+  const isSubmitting             = useRef(false);
+
   const handleScrollTo = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault();
     const element = document.getElementById(id);
@@ -16,18 +28,50 @@ export default function Footer() {
     }
   };
 
+  async function handleNewsletter(e: React.FormEvent) {
+    e.preventDefault();
+
+    if (isSubmitting.current) return;
+    if (!nlEmail || !nlEmail.includes("@")) {
+      setNlMsg("Please enter a valid email.");
+      setNlStatus("error");
+      return;
+    }
+
+    isSubmitting.current = true;
+    setNlStatus("loading");
+    setNlMsg("");
+
+    try {
+      const fd = new FormData();
+      fd.append("email", nlEmail);
+
+      await fetch(NEWSLETTER_URL, {
+        method: "POST",
+        mode:   "no-cors",   // avoids CORS preflight block
+        body:   fd,
+      });
+
+      // no-cors → opaque response → completed fetch = success
+      setNlStatus("success");
+      setNlEmail("");
+      setNlMsg("You're subscribed!");
+    } catch {
+      setNlMsg("Something went wrong. Try again.");
+      setNlStatus("error");
+    } finally {
+      isSubmitting.current = false;
+    }
+  }
+
   return (
     <footer className="bg-black pt-32 pb-12 relative border-t border-brand-orange/30 overflow-hidden">
       {/* Top Frame Line */}
       <div className="absolute top-0 left-0 right-0 h-[1px] bg-white/10 pointer-events-none"></div>
-      
-      {/* Decorative crosses at intersections */}
-     
-      
 
       <div className="w-full px-6 md:px-12 lg:px-24">
         <div className="flex flex-col gap-12 md:gap-24 mb-16 md:mb-24">
-          
+
           {/* Logo Row */}
           <div>
             <Link href="/" className="flex flex-row items-center justify-center md:justify-start gap-3 md:gap-6 mb-6 text-white hover:text-white transition-colors">
@@ -41,6 +85,7 @@ export default function Footer() {
 
           {/* Columns Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8 font-[family-name:var(--font-oxanium)]">
+
             {/* Services */}
             <div className="lg:col-span-3 text-center md:text-left">
               <h4 className="text-brand-orange uppercase text-xs font-light tracking-widest mb-8">Services</h4>
@@ -60,6 +105,7 @@ export default function Footer() {
                 <li><Link href="#testimonials" onClick={(e) => handleScrollTo(e, "testimonials")} className="text-link hover:text-white transition-colors"><span className="text-link_span">Testimonials</span></Link></li>
               </ul>
             </div>
+
             {/* Contact Us */}
             <div className="lg:col-span-3 text-center md:text-left">
               <h4 className="text-brand-orange uppercase text-xs font-light tracking-widest mb-8">Contact Us</h4>
@@ -68,7 +114,6 @@ export default function Footer() {
                 <li><a href="tel:+91XXXXX XXXXX" className="hover:text-brand-orange transition-colors">+91 XXXXX XXXXX</a></li>
                 <li className="text-gray-300">Chennai, Tamil Nadu</li>
               </ul>
-              
             </div>
 
             {/* Newsletter */}
@@ -77,21 +122,53 @@ export default function Footer() {
               <p className="text-gray-400 text-sm mb-6 leading-relaxed">
                 The latest news, articles, and resources, sent to your inbox.
               </p>
-              <form className="flex w-full max-w-md mx-auto md:mx-0">
-                <input 
-                  type="email" 
-                  placeholder="ENTER YOUR EMAIL" 
-                  className="bg-[#1c1c1c] text-white px-6 py-2 w-full outline-none text-sm placeholder:text-gray-500 uppercase border-none focus:ring-1 focus:ring-brand-orange transition-shadow"
-                />
-                <button className="button-custom group bg-brand-orange text-black px-6 py-2 uppercase text-sm font-medium transition-colors border border-transparent whitespace-nowrap flex-shrink-0">
-                  <div className="button_background bg-brand-orange group-hover:bg-orange-600 transition-colors"></div>
-                  <span className="button_text"><span className="button_span">SUBMIT</span></span>
-                </button>
-              </form>
+
+              {nlStatus === "success" ? (
+                /* ── Success state — same footer width, no layout shift ── */
+                <div className="flex items-center gap-2 max-w-md mx-auto md:mx-0">
+                  <span className="w-2 h-2 rounded-full bg-brand-orange flex-shrink-0" />
+                  <p className="text-brand-orange text-xs uppercase tracking-widest font-[family-name:var(--font-oxanium)]">
+                    {nlMsg}
+                  </p>
+                </div>
+              ) : (
+                <div>
+                  <form onSubmit={handleNewsletter} className="flex w-full max-w-md mx-auto md:mx-0">
+                    <input
+                      type="email"
+                      value={nlEmail}
+                      onChange={(e) => setNlEmail(e.target.value)}
+                      placeholder="ENTER YOUR EMAIL"
+                      disabled={nlStatus === "loading"}
+                      className="bg-[#1c1c1c] text-white px-6 py-2 w-full outline-none text-sm placeholder:text-gray-500 uppercase border-none focus:ring-1 focus:ring-brand-orange transition-shadow disabled:opacity-50"
+                    />
+                    <button
+                      type="submit"
+                      disabled={nlStatus === "loading"}
+                      className="button-custom group bg-brand-orange text-black px-6 py-2 uppercase text-sm font-medium transition-colors border border-transparent whitespace-nowrap flex-shrink-0 disabled:opacity-60 disabled:cursor-not-allowed"
+                    >
+                      <div className="button_background bg-brand-orange group-hover:bg-orange-600 transition-colors"></div>
+                      <span className="button_text">
+                        <span className="button_span">
+                          {nlStatus === "loading" ? "…" : "SUBMIT"}
+                        </span>
+                      </span>
+                    </button>
+                  </form>
+
+                  {/* Error message */}
+                  {nlStatus === "error" && nlMsg && (
+                    <p className="text-red-400 text-xs mt-2 font-[family-name:var(--font-oxanium)] tracking-wide">
+                      {nlMsg}
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>
 
+        {/* Bottom bar — identical to original */}
         <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-white/10 text-gray-500 text-xs uppercase tracking-widest gap-4 font-[family-name:var(--font-oxanium)]">
           <div className="flex gap-6">
             <a href="#" className="text-link hover:text-white transition-colors"><span className="text-link_span">X/Twitter</span></a>

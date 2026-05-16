@@ -1,13 +1,12 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import { motion, AnimatePresence } from "framer-motion";
 
-// ─── CONFIG ─────────────────────────────────────────────────────────────────
-// After deploying your Apps Script as a Web App, paste the URL below.
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyRXry6-wC_09oaUbb9TGzm2mg3MSJIFzQyCgmVYYFiMGgxBdU1GPujnv4X0lwQ2oJy/exec";
+// ─── CONFIG ──────────────────────────────────────────────────────────────────
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyhUK-8DgZZDzaN6oX94VAO5tfRdorKCV4jCMYV1FABIbSDMwAlaMHLgwfo6a1IEPw/exec";
 // ─────────────────────────────────────────────────────────────────────────────
 
 type FormData = {
@@ -38,7 +37,7 @@ const INITIAL_FORM: FormData = {
   eventDetails: "",
 };
 
-// ─── Input / Field components ────────────────────────────────────────────────
+// ─── Field wrapper ────────────────────────────────────────────────────────────
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="group relative">
@@ -46,7 +45,6 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
         {label} <span className="text-white/40">*</span>
       </label>
       {children}
-      {/* animated underline */}
       <span className="absolute bottom-0 left-0 w-0 h-px bg-[#FF4522] group-focus-within:w-full transition-all duration-300" />
     </div>
   );
@@ -55,11 +53,14 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 const inputBase =
   "w-full bg-transparent border-b border-white/20 pb-3 text-white text-sm focus:outline-none transition-colors placeholder:text-white/20 font-[family-name:var(--font-oxanium)] font-light";
 
-// ─── Main Component ──────────────────────────────────────────────────────────
+// ─── Main Component ───────────────────────────────────────────────────────────
 export default function ContactPage() {
   const [form, setForm] = useState<FormData>(INITIAL_FORM);
   const [status, setStatus] = useState<FormStatus>("idle");
   const [errorMsg, setErrorMsg] = useState("");
+
+  // ── double-submit guard ──
+  const isSubmitting = useRef(false);
 
   useEffect(() => {
     document.title = "Zhagaram | Contact";
@@ -73,30 +74,54 @@ export default function ContactPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    // ── prevent double submit ──
+    if (isSubmitting.current) return;
+    isSubmitting.current = true;
+
     setStatus("loading");
     setErrorMsg("");
 
+    // Basic client-side validation
+    const { firstName, email, phone, eventType, eventDetails } = form;
+    if (!firstName || !email || !phone || !eventType || !eventDetails) {
+      setErrorMsg("Please fill in all required fields.");
+      setStatus("error");
+      isSubmitting.current = false;
+      return;
+    }
+
     try {
-      const res = await fetch(APPS_SCRIPT_URL, {
+      // ── CORS FIX ─────────────────────────────────────────────────────────
+      // Google Apps Script blocks JSON preflight requests (CORS policy).
+      // Sending as FormData with mode:"no-cors" bypasses the preflight entirely.
+      // The response is "opaque" (unreadable), so we treat a completed
+      // fetch as success. Apps Script reads fields via e.parameter.
+      // ─────────────────────────────────────────────────────────────────────
+      const fd = new FormData();
+      fd.append("firstName",    form.firstName);
+      fd.append("email",        form.email);
+      fd.append("phone",        form.phone);
+      fd.append("eventType",    form.eventType);
+      fd.append("eventDetails", form.eventDetails);
+
+      await fetch(APPS_SCRIPT_URL, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-        // Apps Script requires no-cors for cross-origin POST
-        // If you hit a CORS issue, set mode: "no-cors" and handle accordingly
+        mode:   "no-cors",   // ← skips preflight, avoids CORS block
+        body:   fd,
       });
 
-      const json = await res.json();
-      if (json.success) {
-        setStatus("success");
-        setForm(INITIAL_FORM);
-      } else {
-        throw new Error(json.message || "Submission failed.");
-      }
+      // no-cors → opaque response → treat completed fetch as success
+      setStatus("success");
+      setForm(INITIAL_FORM);
+
     } catch (err: unknown) {
       setErrorMsg(
         err instanceof Error ? err.message : "Something went wrong. Please try again."
       );
       setStatus("error");
+    } finally {
+      isSubmitting.current = false;
     }
   }
 
@@ -121,7 +146,6 @@ export default function ContactPage() {
               transition={{ duration: 0.6, ease: "easeOut" }}
             >
               <div className="mb-4 inline-flex items-center gap-2">
-               
                 <span className="text-[#FF4522] text-[10px] uppercase tracking-[0.2em] font-[family-name:var(--font-oxanium)] font-light">
                   Let's connect
                 </span>
@@ -170,9 +194,9 @@ export default function ContactPage() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
             >
-              {/* Success state */}
               <AnimatePresence mode="wait">
                 {status === "success" ? (
+                  /* ── Success state ── */
                   <motion.div
                     key="success"
                     initial={{ opacity: 0, scale: 0.96 }}
@@ -202,6 +226,7 @@ export default function ContactPage() {
                     </button>
                   </motion.div>
                 ) : (
+                  /* ── Form ── */
                   <motion.form
                     key="form"
                     onSubmit={handleSubmit}
@@ -309,22 +334,6 @@ export default function ContactPage() {
                           <span className="button_span flex items-center gap-2">
                             {status === "loading" ? (
                               <>
-                                <svg
-                                  className="animate-spin w-4 h-4"
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                >
-                                  <circle
-                                    className="opacity-25"
-                                    cx="12" cy="12" r="10"
-                                    stroke="white" strokeWidth="3"
-                                  />
-                                  <path
-                                    className="opacity-75"
-                                    fill="white"
-                                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                                  />
-                                </svg>
                                 Sending…
                               </>
                             ) : (
