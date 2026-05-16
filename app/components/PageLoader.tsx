@@ -14,7 +14,7 @@ export default function PageLoader() {
     const text = textRef.current;
     if (!loader || !text) return;
 
-    // Wait exactly 5 seconds before starting the reveal animation
+    // Wait exactly 3 seconds before starting the reveal animation
     const timeout = setTimeout(() => {
       const tl = gsap.timeline();
       
@@ -31,7 +31,7 @@ export default function PageLoader() {
         ease: "power3.inOut",
       }, "+=0.2")
       .set(loader, { display: "none" });
-    }, 5000);
+    }, 3000);
 
     return () => clearTimeout(timeout);
   }, []);

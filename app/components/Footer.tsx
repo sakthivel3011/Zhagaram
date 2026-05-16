@@ -125,7 +125,7 @@ export default function Footer() {
 
               {nlStatus === "success" ? (
                 /* ── Success state — same footer width, no layout shift ── */
-                <div className="flex items-center gap-2 max-w-md mx-auto md:mx-0">
+                <div className="flex items-center justify-center md:justify-start gap-2 max-w-md mx-auto md:mx-0">
                   <span className="w-2 h-2 rounded-full bg-brand-orange flex-shrink-0" />
                   <p className="text-brand-orange text-xs uppercase tracking-widest font-[family-name:var(--font-oxanium)]">
                     {nlMsg}

@@ -28,7 +28,7 @@ export default function Experience() {
           transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
           className="flex justify-center"
         >
-          <a href="#" className="button-custom group px-8 py-4 font-outfit font-medium tracking-wider text-sm text-center text-white">
+          <a href="/contact" className="button-custom group px-8 py-4 font-outfit font-medium tracking-wider text-sm text-center text-white">
             <div className="button_background bg-black group-hover:bg-gray-800 transition-colors"></div>
             <span className="button_text"><span className="button_span">BOOK NOW</span></span>
           </a>
